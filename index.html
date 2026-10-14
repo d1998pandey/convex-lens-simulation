@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NCERT Class 10: Lens Ray Optics (Convex & Concave)</title>
+  <title>NCERT Class 10: Advanced Lens Ray Optics & Physics Lab</title>
   <style>
     :root {
       --bg: #f8fafc;
@@ -27,11 +27,11 @@
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      padding: 20px;
+      padding: 16px;
     }
     .container {
       width: 100%;
-      max-width: 1100px;
+      max-width: 1150px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -48,32 +48,73 @@
       gap: 12px;
     }
     header h1 { font-size: 1.25rem; font-weight: 700; color: var(--accent); }
-    header p { font-size: 0.85rem; color: var(--muted); }
+    header p { font-size: 0.82rem; color: var(--muted); }
 
-    .lens-switch-bar {
+    /* Navigation Tabs */
+    .nav-tabs {
       display: flex;
-      background: #e2e8f0;
+      gap: 6px;
+      background: #f1f5f9;
       padding: 4px;
       border-radius: 10px;
-      gap: 4px;
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
     }
-    .switch-btn {
+    .tab-btn {
       background: transparent;
       border: none;
       padding: 6px 14px;
       border-radius: 8px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
       color: var(--muted);
       transition: 0.15s;
     }
-    .switch-btn.active {
+    .tab-btn.active {
       background: var(--card);
       color: var(--accent);
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
+    .top-controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .lens-switch-bar {
+      display: flex;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 8px;
+      gap: 4px;
+    }
+    .switch-btn {
+      background: transparent;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    .switch-btn.active {
+      background: var(--card);
+      color: var(--accent);
+    }
+
+    /* Tab Content Panes */
+    .tab-pane { display: none; flex-direction: column; gap: 16px; }
+    .tab-pane.active { display: flex; }
+
+    /* Presets Card */
     .presets-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -84,7 +125,7 @@
       gap: 10px;
     }
     .presets-title {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--muted);
@@ -101,7 +142,7 @@
       color: var(--text);
       padding: 6px 12px;
       border-radius: 8px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.15s;
@@ -112,6 +153,7 @@
       border-color: var(--accent);
     }
 
+    /* Canvas Viewport */
     .main-viewport-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -124,7 +166,7 @@
     }
     canvas {
       width: 100%;
-      height: 420px;
+      height: 400px;
       background: #ffffff;
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -132,15 +174,12 @@
       display: block;
     }
 
+    /* Controls Grid */
     .controls-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 16px;
     }
-    @media (max-width: 768px) {
-      .controls-grid { grid-template-columns: 1fr; }
-    }
-
     .control-box {
       background: var(--card);
       border: 1px solid var(--border);
@@ -154,7 +193,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       font-weight: 500;
     }
     .control-row span span { color: var(--accent); font-family: monospace; }
@@ -169,15 +208,14 @@
     }
     button.action-btn {
       flex: 1;
-      padding: 8px;
+      padding: 7px;
       border-radius: 8px;
       border: 1px solid var(--border);
       background: #f1f5f9;
       color: var(--text);
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       cursor: pointer;
-      transition: 0.15s;
     }
     button.action-btn:hover { background: #e2e8f0; }
     button.action-btn.primary {
@@ -185,8 +223,8 @@
       color: white;
       border-color: var(--accent);
     }
-    button.action-btn.primary:hover { background: var(--accent-hover); }
 
+    /* Explanation & Analysis Box */
     .explanation-box {
       background: var(--card);
       border: 1px solid var(--border);
@@ -194,7 +232,7 @@
       padding: 16px 20px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
     .explanation-title {
       font-size: 0.9rem;
@@ -207,7 +245,7 @@
     .case-badge {
       background: #eff6ff;
       color: var(--accent);
-      padding: 2px 10px;
+      padding: 3px 10px;
       border-radius: 99px;
       font-size: 0.75rem;
       font-weight: 700;
@@ -215,9 +253,9 @@
     }
     .info-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 10px;
-      font-size: 0.84rem;
+      font-size: 0.82rem;
     }
     .info-item {
       background: #f8fafc;
@@ -225,18 +263,49 @@
       border-radius: 8px;
       border: 1px solid var(--border);
     }
-    .info-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+    .info-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
     .info-val { font-weight: 600; color: var(--text); margin-top: 2px; }
-    .info-desc {
-      font-size: 0.84rem;
+    .info-desc-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+    }
+    @media(max-width: 768px) { .info-desc-grid { grid-template-columns: 1fr; } }
+    .info-desc, .app-card {
+      font-size: 0.83rem;
       color: var(--text);
       line-height: 1.5;
       background: #f8fafc;
-      padding: 10px 12px;
+      padding: 10px 14px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      margin-top: 4px;
     }
+    .app-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+
+    /* Static Guide & Quiz Tab Styles */
+    .guide-card, .quiz-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .guide-card h3, .quiz-card h3 { color: var(--accent); font-size: 1.1rem; }
+    .guide-card p, .quiz-card p { font-size: 0.9rem; line-height: 1.5; color: var(--muted); }
+    table.ncert-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 10px;
+    }
+    table.ncert-table th, table.ncert-table td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+    }
+    table.ncert-table th { background: #f1f5f9; font-weight: 600; }
 
     .legend {
       display: flex;
@@ -256,109 +325,168 @@
   <div class="container">
     <header>
       <div>
-        <h1>NCERT Class 10: Lens Ray Optics</h1>
-        <p>Interactive Simulation & Ray Diagram Studio</p>
+        <h1>NCERT Class 10: Lens Ray Optics & Physics Lab</h1>
+        <p>Interactive Ray Diagram Studio, Sign Convention & Thin Lens Formula Lab</p>
       </div>
-      <div style="display: flex; gap: 16px; align-items: center;">
+      <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('studio')">Interactive Ray Studio</button>
+        <button class="tab-btn" onclick="switchTab('guide')">NCERT 10.4 & 10.5 Guide</button>
+        <button class="tab-btn" onclick="switchTab('quiz')">CBSE Board Quiz</button>
+      </div>
+    </header>
+
+    <!-- TAB 1: INTERACTIVE RAY STUDIO -->
+    <div id="tab-studio" class="tab-pane active">
+      <div class="top-controls-bar">
         <div class="lens-switch-bar">
           <button class="switch-btn active" id="btnConvex" onclick="setLensType('convex')">Convex (Converging)</button>
           <button class="switch-btn" id="btnConcave" onclick="setLensType('concave')">Concave (Diverging)</button>
         </div>
-        <div style="display: flex; gap: 6px; align-items: center;">
-          <span style="font-size: 0.82rem; font-weight: 600;">Slow Mo:</span>
-          <input type="checkbox" id="slowMo" style="width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer;" />
-        </div>
-      </div>
-    </header>
-
-    <div class="presets-card">
-      <div class="presets-title" id="presetTitle">NCERT Standard Convex Cases</div>
-      <div class="preset-buttons" id="presetContainer"></div>
-    </div>
-
-    <div class="main-viewport-card">
-      <canvas id="opticsCanvas"></canvas>
-      
-      <div class="legend">
-        <div class="legend-item"><div class="legend-line" style="background: var(--ray1);"></div>Ray 1 (Parallel)</div>
-        <div class="legend-item"><div class="legend-line" style="background: var(--ray2);"></div>Ray 2 (Optical Centre O)</div>
-        <div class="legend-item"><div class="legend-line" style="background: var(--ray3);"></div>Ray 3 (Through Focus)</div>
-        <div class="legend-item"><div class="legend-line" style="background: var(--virtual); border-top: 2px dashed var(--virtual); height: 0;"></div>Virtual Extensions</div>
-      </div>
-    </div>
-
-    <div class="controls-grid">
-      <div class="control-box">
-        <div class="control-row">
-          <span>Object Distance ($u$): <span id="valU">-30.0 cm</span></span>
-          <span>Focal Length ($f$): <span id="valF">15.0 cm</span></span>
-        </div>
-        <input type="range" id="sliderU" min="-70" max="-2" step="0.5" value="-30" />
-        <div class="btn-row">
-          <button class="action-btn" id="resetBtn">Reset Default</button>
-          <button class="action-btn primary" id="toggleAnimBtn">Pause Animation</button>
+        <div style="display: flex; gap: 12px; align-items: center; font-size: 0.85rem; font-weight: 500;">
+          <label style="display: flex; gap: 6px; align-items: center; cursor: pointer;">
+            <input type="checkbox" id="chkGrid" checked onchange="draw()" style="accent-color: var(--accent);"> Show Grid
+          </label>
+          <label style="display: flex; gap: 6px; align-items: center; cursor: pointer;">
+            <input type="checkbox" id="slowMo" style="accent-color: var(--accent);"> Slow-Mo Rays
+          </label>
         </div>
       </div>
 
-      <div class="control-box">
-        <div class="control-row" style="font-size: 0.82rem; color: var(--muted); text-transform: uppercase;">Image Properties</div>
-        <div style="display: flex; gap: 10px; align-items: center;">
-          <div style="flex: 1;">
-            <div style="font-size: 0.72rem; color: var(--muted);">Image Distance ($v$)</div>
-            <div id="valV" style="font-family: monospace; font-weight: 700; font-size: 1.05rem;">+30.0 cm</div>
+      <div class="presets-card">
+        <div class="presets-title" id="presetTitle">NCERT Standard 6 Cases (Click to Test)</div>
+        <div class="preset-buttons" id="presetContainer"></div>
+      </div>
+
+      <div class="main-viewport-card">
+        <canvas id="opticsCanvas"></canvas>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-line" style="background: var(--ray1);"></div>Ray 1 (Parallel to Principal Axis)</div>
+          <div class="legend-item"><div class="legend-line" style="background: var(--ray2);"></div>Ray 2 (Undeviated through Optical Centre O)</div>
+          <div class="legend-item"><div class="legend-line" style="background: var(--ray3);"></div>Ray 3 (Directed through Focus)</div>
+          <div class="legend-item"><div class="legend-line" style="background: var(--virtual); border-top: 2px dashed var(--virtual); height: 0;"></div>Virtual Extensions (Dashed)</div>
+        </div>
+      </div>
+
+      <div class="controls-grid">
+        <div class="control-box">
+          <div class="control-row">
+            <span>Object Distance ($u$): <span id="valU">-30.0 cm</span></span>
+            <span>Focal Length ($f$): <span id="valF">15.0 cm</span></span>
           </div>
-          <div style="flex: 1;">
-            <div style="font-size: 0.72rem; color: var(--muted);">Magnification ($m$)</div>
-            <div id="valM" style="font-family: monospace; font-weight: 700; font-size: 1.05rem;">-1.00x</div>
+          <input type="range" id="sliderU" min="-75" max="-2" step="0.5" value="-30" />
+          <div class="btn-row">
+            <button class="action-btn" id="resetBtn">Reset Default</button>
+            <button class="action-btn primary" id="toggleAnimBtn">Pause Animation</button>
           </div>
         </div>
+
+        <div class="control-box">
+          <div class="control-row">
+            <span>Object Height ($h$): <span id="valH">5.0 cm</span></span>
+            <span>Lens Power ($P$): <span id="valP">+6.67 D</span></span>
+          </div>
+          <input type="range" id="sliderH" min="2.0" max="12.0" step="0.5" value="5.0" />
+          <div class="control-row" style="font-size: 0.8rem; color: var(--muted); margin-top: 4px;">
+            <span>Image Distance ($v$): <strong id="valV" style="color:var(--text)">+30.0 cm</strong></span>
+            <span>Magnification ($m$): <strong id="valM" style="color:var(--text)">-1.00x</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="explanation-box">
+        <div class="explanation-title">
+          <span>Live NCERT Analysis & Optical Characterization</span>
+          <span class="case-badge" id="caseBadge">Case 3: Object at 2F₁</span>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Object Position ($u$)</div>
+            <div class="info-val" id="infoObjPos">At 2F₁ (-30 cm)</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Image Position ($v$)</div>
+            <div class="info-val" id="infoImgPos">At 2F₂ (+30 cm)</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Image Size</div>
+            <div class="info-val" id="infoSize">Same size as object</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Nature & Orientation</div>
+            <div class="info-val" id="infoNature">Real and Inverted</div>
+          </div>
+        </div>
+        <div class="info-desc-grid">
+          <div class="info-desc" id="infoDesc">Loading optical explanation...</div>
+          <div class="app-card">
+            <div class="app-title">Real-World Application</div>
+            <div id="infoApp" style="font-size: 0.82rem; color: var(--muted);">Terrestrial telescope erecting lens, photocopier.</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="explanation-box">
-      <div class="explanation-title">
-        <span>Live Ray Tracing Analysis</span>
-        <span class="case-badge" id="caseBadge">Case 3: Object at 2F₁</span>
+    <!-- TAB 2: NCERT GUIDE -->
+    <div id="tab-guide" class="tab-pane">
+      <div class="guide-card">
+        <h3>NCERT Class 10 Chapter 10: Light – Reflection and Refraction</h3>
+        <p>A lens is a transparent medium bound by two surfaces, of which one or both surfaces are spherical. Convex lenses converge light rays and are called converging lenses, whereas concave lenses diverge light rays and are called diverging lenses.</p>
+        <h3 style="margin-top: 10px;">Sign Convention for Lenses</h3>
+        <p>We follow Cartesian Sign Conventions. Optical centre <code>O</code> is taken as the origin. All distances parallel to the principal axis are measured from O. Object distance <code>u</code> is always negative. Focal length of convex lens is positive, and for concave lens, it is negative.</p>
+        <h3 style="margin-top: 10px;">Convex Lens Cases Table (Summary)</h3>
+        <table class="ncert-table">
+          <thead>
+            <tr><th>Position of Object</th><th>Position of Image</th><th>Relative Size</th><th>Nature</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>At Infinity</td><td>At Focus $F_2$</td><td>Point-sized</td><td>Real & Inverted</td></tr>
+            <tr><td>Beyond $2F_1$</td><td>Between $F_2$ and $2F_2$</td><td>Diminished</td><td>Real & Inverted</td></tr>
+            <tr><td>At $2F_1$</td><td>At $2F_2$</td><td>Same size</td><td>Real & Inverted</td></tr>
+            <tr><td>Between $F_1$ and $2F_1$</td><td>Beyond $2F_2$</td><td>Enlarged</td><td>Real & Inverted</td></tr>
+            <tr><td>At Focus $F_1$</td><td>At Infinity</td><td>Infinitely large</td><td>Real & Inverted</td></tr>
+            <tr><td>Between $F_1$ and $O$</td><td>On same side as object</td><td>Enlarged</td><td>Virtual & Erect</td></tr>
+          </tbody>
+        </table>
       </div>
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="info-label">Object Position</div>
-          <div class="info-val" id="infoObjPos">At 2F₁</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Image Position</div>
-          <div class="info-val" id="infoImgPos">At 2F₂</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Image Size</div>
-          <div class="info-val" id="infoSize">Same size</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">Nature & Orientation</div>
-          <div class="info-val" id="infoNature">Real & Inverted</div>
-        </div>
-      </div>
-      <div class="info-desc" id="infoDesc">Loading optical analysis...</div>
     </div>
+
+    <!-- TAB 3: QUIZ -->
+    <div id="tab-quiz" class="tab-pane">
+      <div class="quiz-card">
+        <h3>CBSE Class 10 Board Practice Quiz</h3>
+        <p><strong>Q1. Where should an object be placed in front of a convex lens to get a real image of the size of the object?</strong></p>
+        <p style="color: var(--text); font-weight: 500; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
+          Answer: At twice the focal length ($2F_1$), the image is formed at $2F_2$ with exact 1:1 scale and real-inverted nature.
+        </p>
+        <p style="margin-top: 10px;"><strong>Q2. A concave lens has a focal length of 15 cm. At what distance should the object be placed from the lens so that it forms an image at 10 cm from the lens?</strong></p>
+        <p style="color: var(--text); font-weight: 500; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
+          Answer: Using $1/v - 1/u = 1/f$, with $f = -15$ cm and $v = -10$ cm, we get $u = -30$ cm.
+        </p>
+      </div>
+    </div>
+
   </div>
 
   <script>
     const canvas = document.getElementById('opticsCanvas');
     const ctx = canvas.getContext('2d');
 
-    let lensType = 'convex'; // 'convex' or 'concave'
+    let lensType = 'convex'; 
     let f = 15.0;      
-    const hObj = 35.0;   
+    let hObj = 5.0;   
     let u = -30.0;       
     let animProgress = 1.0; 
     let isPaused = false;
     let isDragging = false;
 
     const sliderU = document.getElementById('sliderU');
+    const sliderH = document.getElementById('sliderH');
     const valU = document.getElementById('valU');
+    const valH = document.getElementById('valH');
     const valF = document.getElementById('valF');
     const valV = document.getElementById('valV');
     const valM = document.getElementById('valM');
+    const valP = document.getElementById('valP');
     const resetBtn = document.getElementById('resetBtn');
     const toggleAnimBtn = document.getElementById('toggleAnimBtn');
     const slowMoCheckbox = document.getElementById('slowMo');
@@ -371,29 +499,30 @@
     const infoSize = document.getElementById('infoSize');
     const infoNature = document.getElementById('infoNature');
     const infoDesc = document.getElementById('infoDesc');
+    const infoApp = document.getElementById('infoApp');
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+      event.target.classList.add('active');
+      if(tabId === 'studio') draw();
+    }
 
     function setLensType(type) {
       lensType = type;
       document.getElementById('btnConvex').classList.toggle('active', type === 'convex');
       document.getElementById('btnConcave').classList.toggle('active', type === 'concave');
-      if (type === 'concave') {
-        f = 15.0;
-        u = -30.0;
-        sliderU.value = u;
-        presetTitle.textContent = "NCERT Standard Concave Cases";
-      } else {
-        f = 15.0;
-        u = -30.0;
-        sliderU.value = u;
-        presetTitle.textContent = "NCERT Standard Convex Cases";
-      }
+      presetTitle.textContent = type === 'convex' ? "NCERT Standard Convex Cases" : "NCERT Standard Concave Cases";
+      u = -30.0;
+      sliderU.value = u;
       buildPresets();
       updateAll();
     }
 
     const convexCases = [
-      { name: "At Infinity", uVal: -70, check: (u) => u <= -65 },
-      { name: "Beyond 2F₁", uVal: -45, check: (u) => u < -30 && u > -65 },
+      { name: "At Infinity", uVal: -75, check: (u) => u <= -70 },
+      { name: "Beyond 2F₁", uVal: -45, check: (u) => u < -30 && u > -70 },
       { name: "At 2F₁", uVal: -30, check: (u) => Math.abs(u - (-30)) < 0.5 },
       { name: "Between F₁ & 2F₁", uVal: -22.5, check: (u) => u < -15 && u > -30 },
       { name: "At F₁", uVal: -15, check: (u) => Math.abs(u - (-15)) < 0.5 },
@@ -401,8 +530,8 @@
     ];
 
     const concaveCases = [
-      { name: "At Infinity", uVal: -70, check: (u) => u <= -50 },
-      { name: "Any finite distance u", uVal: -30, check: (u) => u > -50 }
+      { name: "At Infinity", uVal: -75, check: (u) => u <= -60 },
+      { name: "Any Finite Distance", uVal: -30, check: (u) => u > -60 }
     ];
 
     function buildPresets() {
@@ -425,88 +554,99 @@
     function updateAll() {
       valF.textContent = f.toFixed(1) + " cm";
       valU.textContent = u.toFixed(1) + " cm";
+      valH.textContent = hObj.toFixed(1) + " cm";
 
-      let v, m;
-      const u_m = u; 
-      const f_eff = lensType === 'convex' ? f : -f; // Concave focal length is negative in sign convention
+      // Lens power P = 1 / f(meters) = 100 / f(cm)
+      const f_meters = f / 100;
+      const power = (lensType === 'convex' ? 1 : -1) / f_meters;
+      valP.textContent = (power > 0 ? "+" : "") + power.toFixed(2) + " D";
 
-      // Thin lens formula: 1/v - 1/u = 1/f => 1/v = 1/f + 1/u
-      const invV = (1 / f_eff) + (1 / u_m);
-      v = 1 / invV;
-      m = v / u_m;
+      const f_eff = lensType === 'convex' ? f : -f;
+      const v_val = 1 / ((1 / f_eff) + (1 / u));
+      const m = v_val / u;
+      const hImgVal = hObj * m;
 
-      valV.textContent = (v > 0 ? "+" : "") + v.toFixed(1) + " cm";
+      valV.textContent = (v_val > 0 ? "+" : "") + v_val.toFixed(1) + " cm";
       valM.textContent = m.toFixed(2) + "x";
 
       if (lensType === 'convex') {
-        updateConvexInfo(u_m, v, m);
+        updateConvexInfo(u, v_val, m);
       } else {
-        updateConcaveInfo(u_m, v, m);
+        updateConcaveInfo(u, v_val, m);
       }
-      highlightActivePreset(u_m);
+      highlightActivePreset(u);
+      draw();
     }
 
     function updateConvexInfo(u, v, m) {
-      if (u <= -65) {
-        caseBadge.textContent = "Convex Case 1: At Infinity";
-        infoObjPos.textContent = "At infinity";
-        infoImgPos.textContent = "At focus F₂";
+      if (u <= -70) {
+        caseBadge.textContent = "Case 1: Object at Infinity";
+        infoObjPos.textContent = "At infinity (∞)";
+        infoImgPos.textContent = "At principal focus F₂ (+15 cm)";
         infoSize.textContent = "Point-sized, highly diminished";
         infoNature.textContent = "Real and Inverted";
-        infoDesc.textContent = "Parallel rays converge at F₂ forming a real, inverted, point-sized image.";
+        infoDesc.textContent = "Parallel rays coming from distant objects converge precisely at the principal focus F₂.";
+        infoApp.textContent = "Astronomical telescope objective, burning glass focusing sunlight.";
       } else if (u < -30) {
-        caseBadge.textContent = "Convex Case 2: Beyond 2F₁";
+        caseBadge.textContent = "Case 2: Object Beyond 2F₁";
         infoObjPos.textContent = `Beyond 2F₁ (${u.toFixed(1)} cm)`;
         infoImgPos.textContent = `Between F₂ and 2F₂ (+${v.toFixed(1)} cm)`;
-        infoSize.textContent = "Diminished";
+        infoSize.textContent = "Diminished (smaller)";
         infoNature.textContent = "Real and Inverted";
-        infoDesc.textContent = "Image is formed between F₂ and 2F₂ and is real, inverted, and diminished.";
+        infoDesc.textContent = "The image forms between F₂ and 2F₂ on the opposite side, smaller than the object.";
+        infoApp.textContent = "Photographic camera lens, human eye crystalline lens.";
       } else if (Math.abs(u - (-30)) < 0.5) {
-        caseBadge.textContent = "Convex Case 3: At 2F₁";
+        caseBadge.textContent = "Case 3: Object at 2F₁";
         infoObjPos.textContent = "At 2F₁ (-30.0 cm)";
         infoImgPos.textContent = "At 2F₂ (+30.0 cm)";
-        infoSize.textContent = "Same size as object";
+        infoSize.textContent = "Same size as object (1:1)";
         infoNature.textContent = "Real and Inverted";
-        infoDesc.textContent = "Image is formed at 2F₂ with exact same size, real, and inverted.";
+        infoDesc.textContent = "When object is at 2F₁, image forms at 2F₂ with exact same dimensions and inverted.";
+        infoApp.textContent = "Terrestrial telescope erecting lens, photocopier 1:1 scale document reproduction.";
       } else if (u < -15) {
-        caseBadge.textContent = "Convex Case 4: Between F₁ & 2F₁";
+        caseBadge.textContent = "Case 4: Object Between F₁ & 2F₁";
         infoObjPos.textContent = `Between F₁ & 2F₁ (${u.toFixed(1)} cm)`;
         infoImgPos.textContent = `Beyond 2F₂ (+${v.toFixed(1)} cm)`;
         infoSize.textContent = "Enlarged (Magnified)";
         infoNature.textContent = "Real and Inverted";
-        infoDesc.textContent = "Image is formed beyond 2F₂ and is magnified, real, and inverted.";
+        infoDesc.textContent = "The image forms beyond 2F₂ and is magnified relative to the object.";
+        infoApp.textContent = "Slide projector, cinema film projector.";
       } else if (Math.abs(u - (-15)) < 0.5) {
-        caseBadge.textContent = "Convex Case 5: At F₁";
+        caseBadge.textContent = "Case 5: Object at F₁";
         infoObjPos.textContent = "At Focus F₁ (-15.0 cm)";
         infoImgPos.textContent = "At Infinity (∞)";
         infoSize.textContent = "Infinitely large / Highly enlarged";
         infoNature.textContent = "Real and Inverted";
-        infoDesc.textContent = "Refracted rays emerge parallel, forming the real image at infinity.";
+        infoDesc.textContent = "Refracted rays emerge parallel to each other, meeting effectively at infinity.";
+        infoApp.textContent = "Searchlights, headlights of cars, spotlight projectors.";
       } else {
-        caseBadge.textContent = "Convex Case 6: Between F₁ & O";
+        caseBadge.textContent = "Case 6: Object Between F₁ & O";
         infoObjPos.textContent = `Between F₁ & O (${u.toFixed(1)} cm)`;
         infoImgPos.textContent = `Same side as object (${v.toFixed(1)} cm)`;
         infoSize.textContent = "Enlarged (Magnified)";
         infoNature.textContent = "Virtual and Erect";
-        infoDesc.textContent = "Rays diverge, appearing to meet backwards to form an enlarged, virtual, erect image.";
+        infoDesc.textContent = "Diverging refracted rays when extended backwards form an upright, virtual, magnified image.";
+        infoApp.textContent = "Simple hand magnifier (reading glass), microscope eyepiece.";
       }
     }
 
     function updateConcaveInfo(u, v, m) {
-      if (u <= -50) {
+      if (u <= -60) {
         caseBadge.textContent = "Concave Case 1: At Infinity";
         infoObjPos.textContent = "At infinity";
         infoImgPos.textContent = "At focus F₁ (same side)";
-        infoSize.textContent = "Highly diminished, point-sized";
+        infoSize.textContent = "Point-sized, highly diminished";
         infoNature.textContent = "Virtual and Erect";
-        infoDesc.textContent = "Parallel rays diverge after refraction, appearing to come from focus F₁.";
+        infoDesc.textContent = "Parallel incident rays diverge, appearing to originate from focus F₁.";
+        infoApp.textContent = "Peephole in doors, wide-angle security mirrors.";
       } else {
-        caseBadge.textContent = "Concave Case 2: Between Optical Centre & Infinity";
+        caseBadge.textContent = "Concave Case 2: Finite Distance";
         infoObjPos.textContent = `Any finite position (${u.toFixed(1)} cm)`;
         infoImgPos.textContent = `Between focus F₁ and O (${v.toFixed(1)} cm)`;
         infoSize.textContent = "Diminished (smaller)";
         infoNature.textContent = "Virtual and Erect";
-        infoDesc.textContent = "A concave lens always produces a virtual, erect, and diminished image between focus and optical centre on the same side.";
+        infoDesc.textContent = "A concave lens always yields a virtual, upright, and diminished image on the object side.";
+        infoApp.textContent = "Spectacles for correcting myopia (short-sightedness).";
       }
     }
 
@@ -533,27 +673,45 @@
       ctx.clearRect(0, 0, width, height);
 
       const cx = width / 2;
-      const cy = height / 2 + 25;
-      const scale = 5.5; 
+      const cy = height / 2 + 15;
+      const scale = 5.0; // pixels per cm
 
       const f_px = f * scale;
       const u_px = u * scale;
+      const hObjPx = hObj * scale;
       
       const f_eff = lensType === 'convex' ? f : -f;
       const v_val = 1 / ((1 / f_eff) + (1 / u));
       const v_px = v_val * scale;
+      const m = v_val / u;
+      const hImgPx = hObjPx * m;
+
+      // Draw Grid if checked
+      if (document.getElementById('chkGrid').checked) {
+        ctx.save();
+        ctx.strokeStyle = "#f1f5f9";
+        ctx.lineWidth = 1;
+        const gridStep = 10 * scale; // every 10 cm
+        for (let x = cx % gridStep; x < width; x += gridStep) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
+        }
+        for (let y = cy % gridStep; y < height; y += gridStep) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
+        }
+        ctx.restore();
+      }
 
       // Principal Axis
       ctx.save();
-      ctx.strokeStyle = "#cbd5e1";
+      ctx.strokeStyle = "#94a3b8";
       ctx.lineWidth = 1.5;
       ctx.beginPath();
-      ctx.moveTo(30, cy);
-      ctx.lineTo(width - 30, cy);
+      ctx.moveTo(20, cy);
+      ctx.lineTo(width - 20, cy);
       ctx.stroke();
       ctx.restore();
 
-      // Foci points labelling based on lens type
+      // Foci points labeling
       const points = lensType === 'convex' ? [
         { label: "2F₁", x: cx - 2 * f_px },
         { label: "F₁", x: cx - f_px },
@@ -568,30 +726,29 @@
         { label: "2F₁", x: cx + 2 * f_px }
       ];
 
-      ctx.font = "bold 12px system-ui, sans-serif";
+      ctx.font = "bold 11px system-ui, sans-serif";
       ctx.textAlign = "center";
       points.forEach(p => {
         ctx.fillStyle = "#64748b";
         ctx.beginPath();
-        ctx.arc(p.x, cy, 3.5, 0, Math.PI * 2);
+        ctx.arc(p.x, cy, 3, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillText(p.label, p.x, cy + (p.yOffset || 22));
+        ctx.fillText(p.label, p.x, cy + (p.yOffset || 20));
       });
 
-      // Lens Symbol Drawing
+      // Lens Drawing
       ctx.save();
       ctx.strokeStyle = "#334155";
-      ctx.fillStyle = "rgba(51, 65, 85, 0.08)";
-      ctx.lineWidth = 3;
-      const lensH = 150;
-      const lensW = 14;
+      ctx.fillStyle = "rgba(51, 65, 85, 0.06)";
+      ctx.lineWidth = 2.5;
+      const lensH = 160;
+      const lensW = 12;
       ctx.beginPath();
       if (lensType === 'convex') {
         ctx.moveTo(cx, cy - lensH/2);
         ctx.quadraticCurveTo(cx + lensW, cy, cx, cy + lensH/2);
         ctx.quadraticCurveTo(cx - lensW, cy, cx, cy - lensH/2);
       } else {
-        // Concave lens shape
         ctx.moveTo(cx - lensW, cy - lensH/2);
         ctx.quadraticCurveTo(cx, cy - lensH/4, cx - lensW/3, cy);
         ctx.quadraticCurveTo(cx, cy + lensH/4, cx - lensW, cy + lensH/2);
@@ -606,37 +763,37 @@
 
       // Object
       const objX = cx + u_px;
-      const objY = cy - hObj;
-      drawArrow(objX, cy, objX, objY, "#1e293b", 3, "Object (AB)");
+      const objY = cy - hObjPx;
+      drawArrow(objX, cy, objX, objY, "#0f172a", 2.5, `Object AB (${hObj.toFixed(1)} cm)`);
 
       // Image
       const imgX = cx + v_px;
-      const m = v_val / u;
-      const hImg = hObj * m; 
-      const imgY = cy - hImg;
-
+      const imgY = cy - hImgPx;
       const pProg = animProgress;
 
       if (lensType === 'convex') {
-        // Convex Rays
+        // Ray 1: Parallel to Principal Axis -> Passes through F2
         drawAnimatedRay(objX, objY, cx, objY, getComputedStyle(document.documentElement).getPropertyValue('--ray1'), pProg, 2);
         const slope1 = (cy - objY) / f_px;
-        const r1EndX = cx + (width - cx) * 0.9;
+        const r1EndX = width - 30;
         const r1EndY = cy + slope1 * (r1EndX - cx);
         drawAnimatedRay(cx, objY, r1EndX, r1EndY, getComputedStyle(document.documentElement).getPropertyValue('--ray1'), pProg, 2);
 
+        // Ray 2: Through Optical Centre O (Undeviated)
         const slope2 = (cy - objY) / (cx - objX);
-        const r2EndX = cx + (width - cx) * 0.9;
+        const r2EndX = width - 30;
         const r2EndY = cy + slope2 * (r2EndX - cx);
         drawAnimatedRay(objX, objY, r2EndX, r2EndY, getComputedStyle(document.documentElement).getPropertyValue('--ray2'), pProg, 2);
 
+        // Ray 3: Through F1 -> Parallel to Principal Axis
         const f1X = cx - f_px;
         const slope3 = (cy - objY) / (f1X - objX);
         const lensIntersectY = objY + slope3 * (cx - objX);
         drawAnimatedRay(objX, objY, cx, lensIntersectY, getComputedStyle(document.documentElement).getPropertyValue('--ray3'), pProg, 2);
-        const r3EndX = cx + (width - cx) * 0.9;
+        const r3EndX = width - 30;
         drawAnimatedRay(cx, lensIntersectY, r3EndX, lensIntersectY, getComputedStyle(document.documentElement).getPropertyValue('--ray3'), pProg, 2);
 
+        // Virtual backward extensions for Case 6
         if (u > -f) {
           const vDash = getComputedStyle(document.documentElement).getPropertyValue('--virtual');
           drawDashedLine(cx, objY, imgX, imgY, vDash);
@@ -644,29 +801,30 @@
           drawDashedLine(cx, lensIntersectY, imgX, imgY, vDash);
         }
       } else {
-        // Concave Ray Tracing
+        // Concave Ray 1: Parallel -> Diverges as if coming from F2
         drawAnimatedRay(objX, objY, cx, objY, getComputedStyle(document.documentElement).getPropertyValue('--ray1'), pProg, 2);
-        // Diverges as if coming from F2 (cx - f_px, cy)
         const concSlope = (cy - objY) / (-f_px); 
-        const r1EndX = cx + (width - cx) * 0.9;
+        const r1EndX = width - 30;
         const r1EndY = cy + concSlope * (r1EndX - cx);
         drawAnimatedRay(cx, objY, r1EndX, r1EndY, getComputedStyle(document.documentElement).getPropertyValue('--ray1'), pProg, 2);
         drawDashedLine(cx, objY, cx - f_px, cy, getComputedStyle(document.documentElement).getPropertyValue('--virtual'));
 
-        // Ray 2 through O
+        // Concave Ray 2: Through O
         const slope2 = (cy - objY) / (cx - objX);
-        const r2EndX = cx + (width - cx) * 0.9;
+        const r2EndX = width - 30;
         const r2EndY = cy + slope2 * (r2EndX - cx);
         drawAnimatedRay(objX, objY, r2EndX, r2EndY, getComputedStyle(document.documentElement).getPropertyValue('--ray2'), pProg, 2);
 
-        // Virtual extensions intersection for image
+        // Virtual extension intersection
         drawDashedLine(cx, objY, imgX, imgY, getComputedStyle(document.documentElement).getPropertyValue('--virtual'));
       }
 
+      // Draw Image Arrow
       if (Math.abs(v_px) < width * 2) {
         const isVirtual = lensType === 'concave' || u > -f;
         const imgColor = isVirtual ? "#9333ea" : "#2563eb";
-        drawArrow(imgX, cy, imgX, imgY, imgColor, 3, isVirtual ? "Virtual Image (A'B')" : "Real Image (A'B')", isVirtual);
+        const labelStr = (isVirtual ? "Virtual Image A'B' (" : "Real Image A'B' (") + Math.abs(hImgPx/scale).toFixed(1) + " cm)";
+        drawArrow(imgX, cy, imgX, imgY, imgColor, 2.5, labelStr, isVirtual);
       }
     }
 
@@ -683,7 +841,7 @@
       ctx.stroke();
 
       const angle = Math.atan2(y2 - y1, x2 - x1);
-      const headLen = 10;
+      const headLen = 9;
       ctx.setLineDash([]);
       ctx.beginPath();
       ctx.moveTo(x2, y2);
@@ -693,7 +851,7 @@
       ctx.fill();
 
       if (label) {
-        ctx.font = "bold 12px system-ui, sans-serif";
+        ctx.font = "bold 11px system-ui, sans-serif";
         ctx.textAlign = "center";
         const labelY = y2 < y1 ? y2 - 10 : y2 + 18;
         ctx.fillText(label, x2, labelY);
@@ -718,8 +876,8 @@
     function drawDashedLine(x1, y1, x2, y2, color) {
       ctx.save();
       ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([5, 5]);
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([4, 4]);
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
@@ -735,7 +893,6 @@
           if (animProgress > 1.0) animProgress = 1.0;
         }
       }
-      draw();
       requestAnimationFrame(animate);
     }
 
@@ -745,9 +902,16 @@
       updateAll();
     });
 
+    sliderH.addEventListener('input', (e) => {
+      hObj = parseFloat(e.target.value);
+      updateAll();
+    });
+
     resetBtn.addEventListener('click', () => {
       u = -30.0;
+      hObj = 5.0;
       sliderU.value = u;
+      sliderH.value = hObj;
       animProgress = 0.0;
       updateAll();
     });
@@ -766,9 +930,9 @@
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const cx = canvas.clientWidth / 2;
-      let newU = (mouseX - cx) / 5.5;
+      let newU = (mouseX - cx) / 5.0;
       if (newU > -2) newU = -2;
-      if (newU < -70) newU = -70;
+      if (newU < -75) newU = -75;
       u = newU;
       sliderU.value = u;
       animProgress = 0.3;
