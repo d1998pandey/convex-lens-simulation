@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Convex Lens Physics Simulation (NCERT Class 10)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --ray1: #dc2626; /* Red - Parallel */
+      --ray2: #16a34a; /* Green - Optical Centre */
+      --ray3: #d97706; /* Amber - Through F1 */
+      --virtual: #9333ea; /* Purple for virtual rays */
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    header h1 { font-size: 1.25rem; font-weight: 700; color: var(--accent); }
+    header p { font-size: 0.85rem; color: var(--muted); }
+
+    .presets-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .presets-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .preset-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .preset-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .main-viewport-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    canvas {
+      width: 100%;
+      height: 420px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: crosshair;
+      display: block;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 768px) {
+      .controls-grid { grid-template-columns: 1fr; }
+    }
+
+    .control-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+    .control-row span span { color: var(--accent); font-family: monospace; }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+    button.action-btn {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f1f5f9;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    button.action-btn:hover { background: #e2e8f0; }
+    button.action-btn.primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    button.action-btn.primary:hover { background: var(--accent-hover); }
+
+    .explanation-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .explanation-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .case-badge {
+      background: #eff6ff;
+      color: var(--accent);
+      padding: 2px 10px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid #dbeafe;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      font-size: 0.84rem;
+    }
+    .info-item {
+      background: #f8fafc;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .info-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+    .info-val { font-weight: 600; color: var(--text); margin-top: 2px; }
+    .info-desc {
+      font-size: 0.84rem;
+      color: var(--text);
+      line-height: 1.5;
+      background: #f8fafc;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-top: 4px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      align-items: center;
+      padding-top: 4px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-line { width: 16px; height: 3px; border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div>
+        <h1>NCERT Class 10: Convex Lens Ray Optics</h1>
+        <p>Interactive Physics Simulation & Ray Diagram Studio</p>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <span style="font-size: 0.82rem; font-weight: 600;">Slow Motion:</span>
+        <input type="checkbox" id="slowMo" style="width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer;" />
+      </div>
+    </header>
+
+    <div class="presets-card">
+      <div class="presets-title">NCERT Standard 6 Cases (Click to Jump)</div>
+      <div class="preset-buttons" id="presetContainer">
+        <!-- Generated by JS -->
+      </div>
+    </div>
+
+    <div class="main-viewport-card">
+      <canvas id="opticsCanvas"></canvas>
+      
+      <div class="legend">
+        <div class="legend-item"><div class="legend-line" style="background: var(--ray1);"></div>Ray 1 (Parallel &rarr; through $F_2$)</div>
+        <div class="legend-item"><div class="legend-line" style="background: var(--ray2);"></div>Ray 2 (Through Optical Centre O)</div>
+        <div class="legend-item"><div class="legend-line" style="background: var(--ray3);"></div>Ray 3 (Through $F_1$ &rarr; Parallel)</div>
+        <div class="legend-item"><div class="legend-line" style="background: var(--virtual); border-top: 2px dashed var(--virtual); height: 0;"></div>Virtual Backward Extensions</div>
+      </div>
+    </div>
+
+    <div class="controls-grid">
+      <div class="control-box">
+        <div class="control-row">
+          <span>Object Distance ($u$): <span id="valU">-30.0 cm</span></span>
+          <span>Focal Length ($f$): <span id="valF">15.0 cm</span></span>
+        </div>
+        <input type="range" id="sliderU" min="-70" max="-2" step="0.5" value="-30" />
+        <div class="btn-row">
+          <button class="action-btn" id="resetBtn">Reset to Default</button>
+          <button class="action-btn primary" id="toggleAnimBtn">Pause Animation</button>
+        </div>
+      </div>
+
+      <div class="control-box">
+        <div class="control-row" style="font-size: 0.82rem; color: var(--muted); text-transform: uppercase;">Quick Magnification</div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <div style="flex: 1;">
+            <div style="font-size: 0.72rem; color: var(--muted);">Image Distance ($v$)</div>
+            <div id="valV" style="font-family: monospace; font-weight: 700; font-size: 1.05rem;">+30.0 cm</div>
+          </div>
+          <div style="flex: 1;">
+            <div style="font-size: 0.72rem; color: var(--muted);">Magnification ($m$)</div>
+            <div id="valM" style="font-family: monospace; font-weight: 700; font-size: 1.05rem;">-1.00x</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="explanation-box">
+      <div class="explanation-title">
+        <span>Live NCERT Analysis & Ray Tracing Explanation</span>
+        <span class="case-badge" id="caseBadge">Case 3: Object at 2F₁</span>
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Object Position</div>
+          <div class="info-val" id="infoObjPos">At 2F₁ (-30 cm)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Image Position</div>
+          <div class="info-val" id="infoImgPos">At 2F₂ (+30 cm)</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Image Size</div>
+          <div class="info-val" id="infoSize">Same size as object</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Nature & Orientation</div>
+          <div class="info-val" id="infoNature">Real and Inverted</div>
+        </div>
+      </div>
+      <div class="info-desc" id="infoDesc">
+        Loading ray optics breakdown...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('opticsCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Optical parameters (in cm units mapped to canvas pixels)
+    const f = 15.0;      // Focal length
+    const hObj = 35.0;   // Object height in pixels
+    let u = -30.0;       // Object distance (Cartesian: negative to the left)
+    let animProgress = 1.0; // 0 to 1 for ray travel animation
+    let isPaused = false;
+    let isDragging = false;
+
+    // DOM Elements
+    const sliderU = document.getElementById('sliderU');
+    const valU = document.getElementById('valU');
+    const valF = document.getElementById('valF');
+    const valV = document.getElementById('valV');
+    const valM = document.getElementById('valM');
+    const resetBtn = document.getElementById('resetBtn');
+    const toggleAnimBtn = document.getElementById('toggleAnimBtn');
+    const slowMoCheckbox = document.getElementById('slowMo');
+    const presetContainer = document.getElementById('presetContainer');
+
+    const caseBadge = document.getElementById('caseBadge');
+    const infoObjPos = document.getElementById('infoObjPos');
+    const infoImgPos = document.getElementById('infoImgPos');
+    const infoSize = document.getElementById('infoSize');
+    const infoNature = document.getElementById('infoNature');
+    const infoDesc = document.getElementById('infoDesc');
+
+    // NCERT 6 Cases definition
+    const cases = [
+      { name: "Case 1: At Infinity", uVal: -70, check: (u) => u <= -65 },
+      { name: "Case 2: Beyond 2F₁", uVal: -45, check: (u) => u < -30 && u > -65 },
+      { name: "Case 3: At 2F₁", uVal: -30, check: (u) => Math.abs(u - (-30)) < 0.5 },
+      { name: "Case 4: Between F₁ & 2F₁", uVal: -22.5, check: (u) => u < -15 && u > -30 },
+      { name: "Case 5: At F₁", uVal: -15, check: (u) => Math.abs(u - (-15)) < 0.5 },
+      { name: "Case 6: Between F₁ & O", uVal: -8, check: (u) => u > -15 }
+    ];
+
+    function buildPresets() {
+      presetContainer.innerHTML = '';
+      cases.forEach((c, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'preset-btn';
+        btn.textContent = `Case ${idx + 1}: ${c.name.split(':')[1]}`;
+        btn.onclick = () => {
+          u = c.uVal;
+          sliderU.value = u;
+          animProgress = 0.0; // Restart ray animation for dramatic effect
+          updateAll();
+        };
+        presetContainer.appendChild(btn);
+      });
+    }
+
+    function updateAll() {
+      valF.textContent = f.toFixed(1) + " cm";
+      valU.textContent = u.toFixed(1) + " cm";
+
+      // Thin lens formula: 1/f = 1/v - 1/u  => 1/v = 1/f + 1/u
+      let v, m, isVirtual = false;
+      const u_m = u; // cm
+      const f_m = f;
+
+      if (Math.abs(u_m + f_m) < 0.01) {
+        // Object at F1 -> v = infinity
+        v = Infinity;
+        m = Infinity;
+      } else {
+        const invV = (1 / f_m) + (1 / u_m);
+        v = 1 / invV;
+        m = v / u_m;
+      }
+
+      if (u_m > -f_m) {
+        isVirtual = true;
+      }
+
+      // Format outputs
+      if (!isFinite(v)) {
+        valV.textContent = "Infinity (∞)";
+        valM.textContent = "Infinite (∞)";
+      } else {
+        valV.textContent = (v > 0 ? "+" : "") + v.toFixed(1) + " cm";
+        valM.textContent = m.toFixed(2) + "x";
+      }
+
+      updateNCERTCaseInfo(u_m, v, m, isVirtual);
+      highlightActivePreset(u_m);
+    }
+
+    function updateNCERTCaseInfo(u, v, m, isVirtual) {
+      let caseNum = 1;
+      if (u <= -65) {
+        caseNum = 1;
+        caseBadge.textContent = "Case 1: Object at Infinity";
+        infoObjPos.textContent = "At infinity (∞)";
+        infoImgPos.textContent = "At principal focus F₂";
+        infoSize.textContent = "Highly diminished, point-sized";
+        infoNature.textContent = "Real and Inverted";
+        infoDesc.textContent = "When the object is at infinity, parallel rays coming from the object strike the convex lens and converge exactly at the principal focus F₂ on the other side, forming a real, inverted, point-sized image.";
+      } else if (u < -30) {
+        caseNum = 2;
+        caseBadge.textContent = "Case 2: Object Beyond 2F₁";
+        infoObjPos.textContent = `Beyond 2F₁ (${u.toFixed(1)} cm)`;
+        infoImgPos.textContent = `Between F₂ and 2F₂ (+${v.toFixed(1)} cm)`;
+        infoSize.textContent = "Diminished (smaller than object)";
+        infoNature.textContent = "Real and Inverted";
+        infoDesc.textContent = "When placed beyond 2F₁, the refracted rays converge between F₂ and 2F₂. The formed image is real, inverted, and smaller in size compared to the object.";
+      } else if (Math.abs(u - (-30)) < 0.5) {
+        caseNum = 3;
+        caseBadge.textContent = "Case 3: Object at 2F₁";
+        infoObjPos.textContent = "At 2F₁ (-30.0 cm)";
+        infoImgPos.textContent = "At 2F₂ (+30.0 cm)";
+        infoSize.textContent = "Same size as object (m = -1)";
+        infoNature.textContent = "Real and Inverted";
+        infoDesc.textContent = "When the object is at 2F₁, the image is formed at 2F₂ on the other side of the lens. The image size is exactly identical to the object, real, and inverted.";
+      } else if (u < -15) {
+        caseNum = 4;
+        caseBadge.textContent = "Case 4: Object Between F₁ and 2F₁";
+        infoObjPos.textContent = `Between F₁ and 2F₁ (${u.toFixed(1)} cm)`;
+        infoImgPos.textContent = `Beyond 2F₂ (+${v.toFixed(1)} cm)`;
+        infoSize.textContent = "Enlarged (magnified)";
+        infoNature.textContent = "Real and Inverted";
+        infoDesc.textContent = "When the object is placed between F₁ and 2F₁, the real and inverted image is formed beyond 2F₂ and is enlarged (magnified) relative to the object.";
+      } else if (Math.abs(u - (-15)) < 0.5) {
+        caseNum = 5;
+        caseBadge.textContent = "Case 5: Object at F₁ (Focus)";
+        infoObjPos.textContent = "At Principal Focus F₁ (-15.0 cm)";
+        infoImgPos.textContent = "At Infinity (∞)";
+        infoSize.textContent = "Highly enlarged / Infinitely large";
+        infoNature.textContent = "Real and Inverted (at infinity)";
+        infoDesc.textContent = "When the object is at the focus F₁, the refracted rays emerge completely parallel to each other. They do not intersect locally, meaning the real, inverted image is formed at infinity.";
+      } else {
+        caseNum = 6;
+        caseBadge.textContent = "Case 6: Object Between F₁ and Optical Centre O";
+        infoObjPos.textContent = `Between F₁ and O (${u.toFixed(1)} cm)`;
+        infoImgPos.textContent = `On same side as object (${v.toFixed(1)} cm)`;
+        infoSize.textContent = "Enlarged (magnified)";
+        infoNature.textContent = "Virtual and Upright (Erect)";
+        infoDesc.textContent = "This is a special magnifying case! When the object is between F₁ and O, refracted rays diverge. When traced backwards, they appear to meet on the same side as the object, forming an enlarged, virtual, and erect image.";
+      }
+    }
+
+    function highlightActivePreset(u) {
+      const btns = presetContainer.querySelectorAll('.preset-btn');
+      btns.forEach((b, idx) => {
+        if (cases[idx].check(u)) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
+      });
+    }
+
+    // Canvas drawing and Ray Tracing
+    function draw() {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Coordinate scaling: Center O is at (width/2, height/2 + 20)
+      const cx = width / 2;
+      const cy = height / 2 + 25;
+      const scale = 5.5; // pixels per cm
+
+      const f_px = f * scale;
+      const u_px = u * scale;
+      
+      let v_px;
+      let v_val = (1/f) + (1/u);
+      v_val = 1 / v_val;
+      v_px = v_val * scale;
+
+      // 1. Draw Principal Axis
+      ctx.save();
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(30, cy);
+      ctx.lineTo(width - 30, cy);
+      ctx.stroke();
+      ctx.restore();
+
+      // 2. Draw Foci and 2F points
+      const points = [
+        { label: "2F₁", x: cx - 2 * f_px },
+        { label: "F₁", x: cx - f_px },
+        { label: "O", x: cx, yOffset: 16 },
+        { label: "F₂", x: cx + f_px },
+        { label: "2F₂", x: cx + 2 * f_px }
+      ];
+
+      ctx.font = "bold 12px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      points.forEach(p => {
+        ctx.fillStyle = "#64748b";
+        ctx.beginPath();
+        ctx.arc(p.x, cy, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillText(p.label, p.x, cy + (p.yOffset || 22));
+      });
+
+      // 3. Draw Convex Lens Symbol
+      ctx.save();
+      ctx.strokeStyle = "#334155";
+      ctx.fillStyle = "rgba(51, 65, 85, 0.08)";
+      ctx.lineWidth = 3;
+      const lensH = 150;
+      const lensW = 16;
+      ctx.beginPath();
+      // Lens outline shape
+      ctx.moveTo(cx, cy - lensH/2);
+      ctx.quadraticCurveTo(cx + lensW, cy, cx, cy + lensH/2);
+      ctx.quadraticCurveTo(cx - lensW, cy, cx, cy - lensH/2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      
+      // Lens arrows top & bottom
+      ctx.beginPath();
+      ctx.moveTo(cx - 10, cy - lensH/2); ctx.lineTo(cx, cy - lensH/2 - 8); ctx.lineTo(cx + 10, cy - lensH/2);
+      ctx.moveTo(cx - 10, cy + lensH/2); ctx.lineTo(cx, cy + lensH/2 + 8); ctx.lineTo(cx + 10, cy + lensH/2);
+      ctx.stroke();
+      ctx.restore();
+
+      // 4. Object Coordinates
+      const objX = cx + u_px;
+      const objY = cy - hObj;
+
+      // Draw Object Arrow
+      drawArrow(objX, cy, objX, objY, "#1e293b", 3, "Object (AB)");
+
+      // 5. Image Coordinates & Drawing
+      const imgX = cx + v_px;
+      const m = v_val / u;
+      const hImg = hObj * m; // negative means inverted
+      const imgY = cy - hImg;
+
+      // Ray Tracing calculations & drawing
+      const pProg = animProgress; // Animation interpolation 0 -> 1
+
+      // Ray 1: Parallel to principal axis, then through F2
+      const r1LensX = cx;
+      const r1LensY = objY;
+      const r1TargetX = cx + f_px * 3;
+      const r1TargetY = cy + (r1LensY - cy) + (r1TargetX - cx) * (cy - (cy - f_px)) / f_px; // slope check
+      // Accurate geometric refraction for Ray 1: passes through F2 (cx + f_px, cy)
+      // Line from lens (cx, objY) through (cx + f_px, cy)
+      const slope1 = (cy - objY) / f_px;
+      
+      drawAnimatedRay(objX, objY, cx, objY, getComputedStyle(document.documentElement).getPropertyValue('--ray1'), pProg, 2);
+      // Refracted part
+      const r1EndX = cx + (width - cx) * 0.9;
+      const r1EndY = cy + slope1 * (r1EndX - cx);
+      drawAnimatedRay(cx, objY, r1EndX, r1EndY, getComputedStyle(document.documentElement).getPropertyValue('--ray1'), pProg, 2);
+
+      // Ray 2: Directly through Optical Centre O (undeviated)
+      const slope2 = (cy - objY) / (cx - objX);
+      const r2EndX = cx + (width - cx) * 0.9;
+      const r2EndY = cy + slope2 * (r2EndX - cx);
+      drawAnimatedRay(objX, objY, r2EndX, r2EndY, getComputedStyle(document.documentElement).getPropertyValue('--ray2'), pProg, 2);
+
+      // Ray 3: Through F1 (cx - f_px, cy), then emerges parallel to principal axis
+      // Line from obj through F1 to lens
+      const f1X = cx - f_px;
+      const slope3 = (cy - objY) / (f1X - objX);
+      const lensIntersectY = objY + slope3 * (cx - objX);
+      
+      drawAnimatedRay(objX, objY, cx, lensIntersectY, getComputedStyle(document.documentElement).getPropertyValue('--ray3'), pProg, 2);
+      // Refracted parallel part
+      const r3EndX = cx + (width - cx) * 0.9;
+      drawAnimatedRay(cx, lensIntersectY, r3EndX, lensIntersectY, getComputedStyle(document.documentElement).getPropertyValue('--ray3'), pProg, 2);
+
+      // Virtual extensions if u > -f (Case 6)
+      if (u > -f) {
+        const vDashColor = getComputedStyle(document.documentElement).getPropertyValue('--virtual');
+        // Backwards extension for Ray 1
+        drawDashedLine(cx, objY, imgX, imgY, vDashColor);
+        // Backwards extension for Ray 2
+        drawDashedLine(cx, cy, imgX, imgY, vDashColor);
+        // Backwards extension for Ray 3
+        drawDashedLine(cx, lensIntersectY, imgX, imgY, vDashColor);
+      }
+
+      // Draw Image Arrow
+      if (isFinite(v_val) && Math.abs(v_px) < width * 2) {
+        const isVirtual = u > -f;
+        const imgColor = isVirtual ? "#9333ea" : "#2563eb";
+        drawArrow(imgX, cy, imgX, imgY, imgColor, 3, isVirtual ? "Virtual Image (A'B')" : "Real Image (A'B')", isVirtual);
+      }
+    }
+
+    function drawArrow(x1, y1, x2, y2, color, width, label, isDashed = false) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = width;
+      if (isDashed) ctx.setLineDash([4, 4]);
+
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      // Arrowhead
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const headLen = 10;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - headLen * Math.cos(angle - Math.PI / 6), y2 - headLen * Math.sin(angle - Math.PI / 6));
+      ctx.lineTo(x2 - headLen * Math.cos(angle + Math.PI / 6), y2 - headLen * Math.sin(angle + Math.PI / 6));
+      ctx.closePath();
+      ctx.fill();
+
+      // Label
+      if (label) {
+        ctx.font = "bold 12px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        const labelY = y2 < y1 ? y2 - 10 : y2 + 18;
+        ctx.fillText(label, x2, labelY);
+      }
+      ctx.restore();
+    }
+
+    function drawAnimatedRay(x1, y1, x2, y2, color, progress, width) {
+      if (progress <= 0) return;
+      const curX = x1 + (x2 - x1) * Math.min(1, progress);
+      const curY = y1 + (y2 - y1) * Math.min(1, progress);
+
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(curX, curY);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawDashedLine(x1, y1, x2, y2, color) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Animation Loop
+    function animate() {
+      if (!isPaused) {
+        const speed = slowMoCheckbox.checked ? 0.008 : 0.03;
+        if (animProgress < 1.0) {
+          animProgress += speed;
+          if (animProgress > 1.0) animProgress = 1.0;
+        }
+      }
+      draw();
+      requestAnimationFrame(animate);
+    }
+
+    // Event Listeners for dragging and slider
+    sliderU.addEventListener('input', (e) => {
+      u = parseFloat(e.target.value);
+      animProgress = 0.2; // restart ray trace motion smoothly
+      updateAll();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      u = -30.0;
+      sliderU.value = u;
+      animProgress = 0.0;
+      updateAll();
+    });
+
+    toggleAnimBtn.addEventListener('click', () => {
+      isPaused = !isPaused;
+      toggleAnimBtn.textContent = isPaused ? "Resume Animation" : "Pause Animation";
+      if (!isPaused) animProgress = 0.0;
+    });
+
+    // Canvas Dragging support
+    canvas.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      updateObjectFromMouse(e);
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (isDragging) updateObjectFromMouse(e);
+    });
+    window.addEventListener('pointerup', () => { isDragging = false; });
+
+    function updateObjectFromMouse(e) {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const cx = canvas.clientWidth / 2;
+      const scale = 5.5;
+
+      let newU = (mouseX - cx) / scale;
+      // Clamp between -70 and -2 cm (object must stay on left side)
+      if (newU > -2) newU = -2;
+      if (newU < -70) newU = -70;
+
+      u = newU;
+      sliderU.value = u;
+      animProgress = 0.3;
+      updateAll();
+    }
+
+    // Initialize
+    buildPresets();
+    updateAll();
+    animate();
+  </script>
+</body>
+</html>
